@@ -1,118 +1,213 @@
-import Image from 'next/image'
-import { Inter } from 'next/font/google'
+import { Inter } from "next/font/google";
+import { useState, useEffect } from "react";
 
-const inter = Inter({ subsets: ['latin'] })
+import SearchIcon from "@rsuite/icons/Search";
+import { Input, InputGroup, DatePicker, Pagination } from "rsuite";
+
+import PlaneCard from "./components/PlaneCard";
+import Footer from "./components/Footer";
+import Header from "./components/Header";
+
+const inter = Inter({ subsets: ["latin"] });
 
 export default function Home() {
+  const [startDate, setStartDate] = useState(null);
+  const [endDate, setEndDate] = useState(null);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [departureSearch, setDepartureSearch] = useState("");
+  const [arrivalSearch, setArrivalSearch] = useState("");
+  const [filteredFlights, setFilteredFlights] = useState([]);
+  const [activePage, setActivePage] = useState(1);
+  const [limit, setLimit] = useState(5);
+  const startIndex = (activePage - 1) * limit;
+  const endIndex = startIndex + limit;
+  const currentFlights = filteredFlights.slice(startIndex, endIndex);
+  const [flights, setFlights] = useState([]);
+
+  useEffect(() => {
+    const fetchFlights = async () => {
+      const response = await fetch("/api/flights");
+      const data = await response.json();
+      setFlights(data);
+      setFilteredFlights(data);
+    };
+
+    fetchFlights();
+  }, []);
+
+  const handleSearch = (e) => {
+    e.preventDefault();
+
+    const isWithinDateRange = (flight) => {
+      if (!flight || !flight.departureTime || !flight.arrivalTime) {
+        return false;
+      }
+      const departureTime = new Date(flight.departureTime);
+      const arrivalTime = new Date(flight.arrivalTime);
+
+      const startDateTime = startDate ? new Date(startDate) : null;
+      const endDateTime = endDate ? new Date(endDate) : null;
+
+      const departureMatches =
+        !startDateTime || matchesDate(departureTime, startDateTime);
+      const arrivalMatches =
+        !endDateTime || matchesDate(arrivalTime, endDateTime);
+
+      return departureMatches && arrivalMatches;
+    };
+
+    const matchesDate = (date1, date2) => {
+      return (
+        date1.getFullYear() === date2.getFullYear() &&
+        date1.getMonth() === date2.getMonth() &&
+        date1.getDate() === date2.getDate()
+      );
+    };
+
+    const matchesDepartureSearch = (flight) => {
+      if (!departureSearch) return true;
+      const flightDepartureDate = new Date(flight.departureTime);
+      const searchDate = new Date(departureSearch);
+      return matchesDate(flightDepartureDate, searchDate);
+    };
+
+    const matchesArrivalSearch = (flight) => {
+      if (!arrivalSearch) return true;
+      const flightArrivalDate = new Date(flight.arrivalTime);
+      const searchDate = new Date(arrivalSearch);
+      return matchesDate(flightArrivalDate, searchDate);
+    };
+
+    const matchesSearch = (flight) => {
+      const searchTermLower = searchTerm.toLowerCase();
+      if (
+        !flight.airline == undefined ||
+        !flight.departure == undefined ||
+        !flight.arrival == undefined
+      )
+        return false;
+      return (
+        searchTerm === "" ||
+        flight.airline.toLowerCase().includes(searchTermLower) ||
+        flight.departure.toLowerCase().includes(searchTermLower) ||
+        flight.arrival.toLowerCase().includes(searchTermLower)
+      );
+    };
+    const filtered = flights.filter(
+      (flight) =>
+        isWithinDateRange(flight) &&
+        matchesDepartureSearch(flight) &&
+        matchesArrivalSearch(flight) &&
+        matchesSearch(flight)
+    );
+
+    setFilteredFlights(filtered);
+  };
+
   return (
     <main
-      className={`flex min-h-screen flex-col items-center justify-between p-24 ${inter.className}`}
+      className={` flex min-h-screen flex-col items-center justify-start ${inter.className}`}
     >
-      <div className="z-10 max-w-5xl w-full items-center justify-between font-mono text-sm lg:flex">
-        <p className="fixed left-0 top-0 flex w-full justify-center border-b border-gray-300 bg-gradient-to-b from-zinc-200 pb-6 pt-8 backdrop-blur-2xl dark:border-neutral-800 dark:bg-zinc-800/30 dark:from-inherit lg:static lg:w-auto lg:rounded-xl lg:border lg:bg-gray-200 lg:p-4 lg:dark:bg-zinc-800/30">
-          Get started by editing&nbsp;
-          <code className="font-mono font-bold">pages/index.js</code>
-        </p>
-        <div className="fixed bottom-0 left-0 flex h-48 w-full items-end justify-center bg-gradient-to-t from-white via-white dark:from-black dark:via-black lg:static lg:h-auto lg:w-auto lg:bg-none">
-          <a
-            className="pointer-events-none flex place-items-center gap-2 p-8 lg:pointer-events-auto lg:p-0"
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            By{' '}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className="dark:invert"
-              width={100}
-              height={24}
-              priority
+      <Header />
+      <section id="content">
+        <div
+          className="container mx-auto p-4 lg:px-48 mt-24"
+          style={{ minHeight: "100vh" }}
+        >
+          <div className="w-full border-2 bg-white border-gray-200 py-6 px-4 border-xl rounded-xl">
+            <form
+              onSubmit={handleSearch}
+              className="flex flex-col md:flex-row items-center gap-4"
+            >
+              <div className="flex-grow  w-full  lg:w-1/4	">
+                <DatePicker
+                  className="w-full bg-white"
+                  size="lg"
+                  format="MM/dd/yyyy"
+                  style={{ borderRadius: "6px" }}
+                  onChange={(value) => setStartDate(value)}
+                />
+              </div>
+              <div className="flex-grow w-full  lg:w-1/4	">
+                <DatePicker
+                  size="lg"
+                  format="MM/dd/yyyy"
+                  className="bg-white  w-full "
+                  style={{ borderRadius: "6px" }}
+                  onChange={(value) => setEndDate(value)}
+                />
+              </div>
+              <div className="flex-grow   w-full">
+                <InputGroup inside>
+                  <Input
+                    size="lg"
+                    placeholder="Arama yapın"
+                    style={{
+                      backgroundColor: "white",
+                      borderRadius: "6px 0 0 6px",
+                    }}
+                    onChange={(value) => setSearchTerm(value)}
+                  />
+                  <InputGroup.Addon
+                    style={{
+                      backgroundColor: "white",
+                      borderRadius: "0 6px 6px 0",
+                    }}
+                  >
+                    <SearchIcon />
+                  </InputGroup.Addon>
+                </InputGroup>
+              </div>
+              <button
+                className="bg-blue-500  text-white px-4 py-2 border-sm rounded-md self-stretch md:self-auto"
+                type="submit"
+              >
+                Ara
+              </button>
+            </form>
+          </div>
+
+          <div className="mt-6">
+            <h2 className="text-2xl md:text-3xl font-bold text-center uppercase  decoration-blue-300 decoration-2 underline-offset-4 mb-5">
+              Uçuş Sonuçları
+            </h2>{" "}
+            <ul>
+              {currentFlights.map((flight, index) => (
+                <PlaneCard flight={flight} key={index} />
+              ))}
+            </ul>
+            {
+              currentFlights.length === 0 && (
+                <div className="text-center text-2xl font-bold text-red-500">
+                  Uçuş bulunamadı
+                </div>
+              ) // Eğer uçuş yoksa uyarı göster
+            }
+            <Pagination
+              size="lg"
+              prev={true}
+              next={true}
+              first={true}
+              last={true}
+              ellipsis={true}
+              boundaryLinks={true}
+              total={filteredFlights.length}
+              limit={limit}
+              maxButtons={5}
+              activePage={activePage}
+              onChangePage={setActivePage}
+              onChangeLimit={setLimit}
+              style={{
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                margin: "2rem",
+              }}
             />
-          </a>
+          </div>
         </div>
-      </div>
-
-      <div className="relative flex place-items-center before:absolute before:h-[300px] before:w-[480px] before:-translate-x-1/2 before:rounded-full before:bg-gradient-radial before:from-white before:to-transparent before:blur-2xl before:content-[''] after:absolute after:-z-20 after:h-[180px] after:w-[240px] after:translate-x-1/3 after:bg-gradient-conic after:from-sky-200 after:via-blue-200 after:blur-2xl after:content-[''] before:dark:bg-gradient-to-br before:dark:from-transparent before:dark:to-blue-700/10 after:dark:from-sky-900 after:dark:via-[#0141ff]/40 before:lg:h-[360px]">
-        <Image
-          className="relative dark:drop-shadow-[0_0_0.3rem_#ffffff70] dark:invert"
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
-        />
-      </div>
-
-      <div className="mb-32 grid text-center lg:max-w-5xl lg:w-full lg:mb-0 lg:grid-cols-4 lg:text-left">
-        <a
-          href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Docs{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Find in-depth information about Next.js features and API.
-          </p>
-        </a>
-
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Learn{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Learn about Next.js in an interactive course with&nbsp;quizzes!
-          </p>
-        </a>
-
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Templates{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Discover and deploy boilerplate example Next.js&nbsp;projects.
-          </p>
-        </a>
-
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Deploy{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
-      </div>
+      </section>
+      <Footer />
     </main>
-  )
+  );
 }

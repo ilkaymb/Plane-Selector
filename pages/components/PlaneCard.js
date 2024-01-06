@@ -1,6 +1,10 @@
 import React from "react";
 
 export default function PlaneCard({ flight }) {
+  if (!flight) {
+    return <div>Uçuş bilgileri yükleniyor...</div>;
+  }
+
   return (
     <li className="border-2 bg-white  border-gray-200 p-4 mt-4 flex flex-col md:flex-row items-center bg-white rounded-lg hover:bg-white hover:shadow-md transition-shadow">
       <div className="mb-4 md:mb-0 md:mr-8 flex flex-col justify-between border-b md:border-b-0 md:border-r-2 h-full border-gray-300">

@@ -2,7 +2,13 @@ import { Inter } from "next/font/google";
 import { useState, useEffect } from "react";
 
 import SearchIcon from "@rsuite/icons/Search";
-import { Input, InputGroup, DatePicker, Pagination } from "rsuite";
+import {
+  Input,
+  InputGroup,
+  DatePicker,
+  Pagination,
+  SelectPicker,
+} from "rsuite";
 
 import PlaneCard from "./components/PlaneCard";
 import Footer from "./components/Footer";
@@ -23,6 +29,14 @@ export default function Home() {
   const endIndex = startIndex + limit;
   const currentFlights = filteredFlights.slice(startIndex, endIndex);
   const [flights, setFlights] = useState([]);
+  const selectionData = ["Hava Alanı", "Geliş Şehri", "Gidiş Şehri"].map(
+    (item) => ({ label: item, value: item })
+  );
+  const [isOneWay, setIsOneWay] = useState(false);
+
+  const [selectedSearchType, setSelectedSearchType] = useState(
+    selectionData[0].value
+  );
 
   useEffect(() => {
     const fetchFlights = async () => {
@@ -80,18 +94,27 @@ export default function Home() {
 
     const matchesSearch = (flight) => {
       const searchTermLower = searchTerm.toLowerCase();
-      if (
-        !flight.airline == undefined ||
-        !flight.departure == undefined ||
-        !flight.arrival == undefined
-      )
-        return false;
-      return (
-        searchTerm === "" ||
-        flight.airline.toLowerCase().includes(searchTermLower) ||
-        flight.departure.toLowerCase().includes(searchTermLower) ||
-        flight.arrival.toLowerCase().includes(searchTermLower)
-      );
+      if (!flight.airline || !flight.departure || !flight.arrival) return false;
+
+      switch (selectedSearchType) {
+        case "Hava Alanı":
+          return (
+            searchTerm === "" ||
+            flight.airline.toLowerCase().includes(searchTermLower)
+          );
+        case "Geliş Şehri":
+          return (
+            searchTerm === "" ||
+            flight.departure.toLowerCase().includes(searchTermLower)
+          );
+        case "Gidiş Şehri":
+          return (
+            searchTerm === "" ||
+            flight.arrival.toLowerCase().includes(searchTermLower)
+          );
+        default:
+          return false;
+      }
     };
     const filtered = flights.filter(
       (flight) =>
@@ -117,27 +140,46 @@ export default function Home() {
           <div className="w-full border-2 bg-white border-gray-200 py-6 px-4 border-xl rounded-xl">
             <form
               onSubmit={handleSearch}
-              className="flex flex-col md:flex-row items-center gap-4"
+              className="flex flex-col md:flex-row items-start gap-4"
             >
-              <div className="flex-grow  w-full  lg:w-1/4	">
-                <DatePicker
-                  className="w-full bg-white"
-                  size="lg"
-                  format="MM/dd/yyyy"
-                  style={{ borderRadius: "6px" }}
-                  onChange={(value) => setStartDate(value)}
-                />
+              <div className="flex-grow w-full lg:w-1/4">
+                <div className="flex flex-col">
+                  <DatePicker
+                    className="w-full bg-white mb-4"
+                    size="lg"
+                    format="MM/dd/yyyy"
+                    style={{ borderRadius: "6px" }}
+                    onChange={(value) => setStartDate(value)}
+                  />
+                  <div className="flex items-center">
+                    <input
+                      type="checkbox"
+                      id="one-way"
+                      className="text-blue-600 border-gray-300 focus:ring-blue-500 text-xl"
+                      checked={isOneWay}
+                      onChange={(e) => setIsOneWay(e.target.checked)}
+                    />
+                    <label
+                      htmlFor="one-way"
+                      className="ml-2 text-sm font-medium text-gray-900"
+                    >
+                      Sadece Gidiş
+                    </label>
+                  </div>
+                </div>
               </div>
-              <div className="flex-grow w-full  lg:w-1/4	">
+              <div className="flex-grow w-full lg:w-1/4">
                 <DatePicker
                   size="lg"
                   format="MM/dd/yyyy"
-                  className="bg-white  w-full "
+                  className="bg-white w-full"
                   style={{ borderRadius: "6px" }}
                   onChange={(value) => setEndDate(value)}
+                  disabled={isOneWay}
                 />
               </div>
-              <div className="flex-grow   w-full">
+
+              <div className="flex-grow w-full">
                 <InputGroup inside>
                   <Input
                     size="lg"
@@ -158,8 +200,19 @@ export default function Home() {
                   </InputGroup.Addon>
                 </InputGroup>
               </div>
+              <div className="flex-grow w-full lg:w-2/4">
+                <SelectPicker
+                  placeholder="Aramak İstediğiniz Yeri Seçin"
+                  className="w-full "
+                  size="lg"
+                  data={selectionData}
+                  defaultValue={selectionData[0].value}
+                  onChange={(value) => setSelectedSearchType(value)}
+                  disabledItemValues={isOneWay ? ["Geliş Şehri"] : []}
+                />
+              </div>
               <button
-                className="bg-blue-500  text-white px-4 py-2 border-sm rounded-md self-stretch md:self-auto"
+                className="bg-blue-500 text-white px-4 py-2 border-sm rounded-md self-stretch md:self-auto"
                 type="submit"
               >
                 Ara
@@ -168,7 +221,7 @@ export default function Home() {
           </div>
 
           <div className="mt-6">
-            <h2 className="text-2xl md:text-3xl font-bold text-center uppercase  decoration-blue-300 decoration-2 underline-offset-4 mb-5">
+            <h2 className="text-2xl md:text-3xl font-bold  uppercase  decoration-blue-300 decoration-2 underline-offset-4 mb-5">
               Uçuş Sonuçları
             </h2>{" "}
             <ul>
@@ -176,13 +229,11 @@ export default function Home() {
                 <PlaneCard flight={flight} key={index} />
               ))}
             </ul>
-            {
-              currentFlights.length === 0 && (
-                <div className="text-center text-2xl font-bold text-red-500">
-                  Uçuş bulunamadı
-                </div>
-              ) // Eğer uçuş yoksa uyarı göster
-            }
+            {currentFlights.length === 0 && (
+              <div className="text-center text-2xl font-bold text-red-500">
+                Uçuş bulunamadı
+              </div>
+            )}
             <Pagination
               size="lg"
               prev={true}

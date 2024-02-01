@@ -7,7 +7,7 @@ export default function PlaneCard({ flight }) {
   }
 
   return (
-    <li className="border-2 bg-[#fffc]  border-gray-200  mt-8 flex flex-col md:flex-row items-center bg-white rounded-lg hover:bg-white hover:shadow-md transition-shadow hover:scale-105 transform-gpu">
+    <li className="border-2 bg-[#fffc] hover:bg-white  border-gray-200  mt-8 flex flex-col md:flex-row items-center bg-white rounded-lg hover:bg-white hover:shadow-md hover:shadow-[#fff3] transition-shadow hover:scale-[1.03] transform-gpu">
       <div className="mb-4 md:mb-0 md:mr-8 p-4 flex flex-col justify-between border-b md:border-b-0 md:border-r-2 h-full border-gray-300">
         <div className="text-2xl font-semibold text-blue-500 w-full md:w-48 text-center md:text-left ">
           {flight.airline}

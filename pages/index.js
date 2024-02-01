@@ -134,7 +134,7 @@ export default function Home() {
       <Header />
       <section id="content">
         <div
-          className="container mx-auto p-4 lg:px-48 mt-24"
+          className="container mx-auto p-4 lg:px-60 mt-24"
           style={{ minHeight: "100vh" }}
         >
           <div className="w-full border-2 bg-white border-gray-200 py-6 px-4 border-xl rounded-xl">
@@ -145,25 +145,26 @@ export default function Home() {
               <div className="flex-grow w-full lg:w-1/4">
                 <div className="flex flex-col">
                   <DatePicker
-                    className="w-full bg-white mb-4"
+                    className="w-full bg-white mb-4 lg:w-36"
                     size="lg"
                     format="MM/dd/yyyy"
                     style={{ borderRadius: "6px" }}
                     onChange={(value) => setStartDate(value)}
+                    requirement
                   />
                   <div className="flex items-center">
                     <input
                       type="checkbox"
                       id="one-way"
-                      className="text-blue-600 border-gray-300 focus:ring-blue-500 text-xl"
+                      className="text-blue-600  border-gray-600 focus:ring-blue-500 text-xl w-4 h-4"
                       checked={isOneWay}
                       onChange={(e) => setIsOneWay(e.target.checked)}
                     />
                     <label
                       htmlFor="one-way"
-                      className="ml-2 text-sm font-medium text-gray-900"
+                      className="ml-2 text-xs font-medium text-gray-600"
                     >
-                      Sadece Gidiş
+                      Tek Yön
                     </label>
                   </div>
                 </div>
@@ -171,14 +172,13 @@ export default function Home() {
               <div className="flex-grow w-full lg:w-1/4">
                 <DatePicker
                   size="lg"
-                  format="MM/dd/yyyy"
-                  className="bg-white w-full"
+                  format="MM/dd/yyyy "
+                  className="bg-white w-full  lg:w-36"
                   style={{ borderRadius: "6px" }}
                   onChange={(value) => setEndDate(value)}
                   disabled={isOneWay}
                 />
               </div>
-
               <div className="flex-grow w-full">
                 <InputGroup inside>
                   <Input
@@ -187,6 +187,7 @@ export default function Home() {
                     style={{
                       backgroundColor: "white",
                       borderRadius: "6px 0 0 6px",
+                      textAlign: "center",
                     }}
                     onChange={(value) => setSearchTerm(value)}
                   />
@@ -200,19 +201,19 @@ export default function Home() {
                   </InputGroup.Addon>
                 </InputGroup>
               </div>
-              <div className="flex-grow w-full lg:w-2/4">
+              <div className="flex-grow w-full  d-flex gap-5">
                 <SelectPicker
                   placeholder="Aramak İstediğiniz Yeri Seçin"
-                  className="w-full "
+                  className="w-full  "
                   size="lg"
                   data={selectionData}
                   defaultValue={selectionData[0].value}
                   onChange={(value) => setSelectedSearchType(value)}
                   disabledItemValues={isOneWay ? ["Geliş Şehri"] : []}
-                />
-              </div>
+                />{" "}
+              </div>{" "}
               <button
-                className="bg-blue-500 text-white px-4 py-2 border-sm rounded-md self-stretch md:self-auto"
+                className="bg-blue-500 text-white px-5 py-3 h-full w-full lg:w-16  border-sm rounded-md "
                 type="submit"
               >
                 Ara
@@ -221,7 +222,7 @@ export default function Home() {
           </div>
 
           <div className="mt-6">
-            <h2 className="text-2xl md:text-3xl font-bold  uppercase  decoration-blue-300 decoration-2 underline-offset-4 mb-5">
+            <h2 className="text-2xl md:text-3xl font-bold text-white  uppercase  decoration-blue-300 decoration-2 underline-offset-4 mb-5">
               Uçuş Sonuçları
             </h2>{" "}
             <ul>
@@ -234,27 +235,29 @@ export default function Home() {
                 Uçuş bulunamadı
               </div>
             )}
-            <Pagination
-              size="lg"
-              prev={true}
-              next={true}
-              first={true}
-              last={true}
-              ellipsis={true}
-              boundaryLinks={true}
-              total={filteredFlights.length}
-              limit={limit}
-              maxButtons={5}
-              activePage={activePage}
-              onChangePage={setActivePage}
-              onChangeLimit={setLimit}
-              style={{
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-                margin: "2rem",
-              }}
-            />
+            <div className="w-full border-2 bg-white   ">
+              <Pagination
+                size="lg"
+                prev={true}
+                next={true}
+                first={true}
+                last={true}
+                ellipsis={true}
+                total={filteredFlights.length}
+                limit={limit}
+                maxButtons={5}
+                activePage={activePage}
+                onChangePage={setActivePage}
+                onChangeLimit={setLimit}
+                style={{
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  margin: "2rem",
+                  color: "white",
+                }}
+              />
+            </div>
           </div>
         </div>
       </section>

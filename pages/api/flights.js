@@ -5,6 +5,7 @@ const flights = [
     departureTime: new Date("2024-01-10T08:00:00"),
     arrivalTime: new Date("2024-01-10T16:00:00"),
     airline: "Turkish Airlines",
+    price: 800,
   },
   {
     departure: "Ankara",
@@ -12,6 +13,7 @@ const flights = [
     departureTime: new Date("2024-01-11T09:30:00"),
     arrivalTime: new Date("2024-01-11T12:45:00"),
     airline: "Lufthansa",
+    price: 600,
   },
   {
     departure: "London",
@@ -19,6 +21,7 @@ const flights = [
     departureTime: new Date("2024-01-12T07:20:00"),
     arrivalTime: new Date("2024-01-12T09:00:00"),
     airline: "British Airways",
+    price: 450,
   },
   {
     departure: "New York",
@@ -26,6 +29,7 @@ const flights = [
     departureTime: new Date("2024-01-13T11:00:00"),
     arrivalTime: new Date("2024-01-13T12:30:00"),
     airline: "Air Canada",
+    price: 300,
   },
   {
     departure: "Tokyo",
@@ -33,6 +37,7 @@ const flights = [
     departureTime: new Date("2024-01-14T14:00:00"),
     arrivalTime: new Date("2024-01-14T16:30:00"),
     airline: "ANA",
+    price: 750,
   },
   {
     departure: "Dubai",
@@ -40,6 +45,7 @@ const flights = [
     departureTime: new Date("2024-01-15T18:45:00"),
     arrivalTime: new Date("2024-01-15T21:15:00"),
     airline: "Emirates",
+    price: 400,
   },
   {
     departure: "Sydney",
@@ -47,6 +53,7 @@ const flights = [
     departureTime: new Date("2024-01-16T06:00:00"),
     arrivalTime: new Date("2024-01-16T08:35:00"),
     airline: "Qantas",
+    price: 550,
   },
   {
     departure: "San Francisco",
@@ -54,6 +61,7 @@ const flights = [
     departureTime: new Date("2024-01-17T09:15:00"),
     arrivalTime: new Date("2024-01-17T10:45:00"),
     airline: "United Airlines",
+    price: 200,
   },
   {
     departure: "Singapore",
@@ -61,6 +69,7 @@ const flights = [
     departureTime: new Date("2024-01-18T13:30:00"),
     arrivalTime: new Date("2024-01-18T15:05:00"),
     airline: "Singapore Airlines",
+    price: 350,
   },
   {
     departure: "Hong Kong",
@@ -68,6 +77,7 @@ const flights = [
     departureTime: new Date("2024-01-19T17:00:00"),
     arrivalTime: new Date("2024-01-19T19:20:00"),
     airline: "Cathay Pacific",
+    price: 500,
   },
   {
     departure: "Madrid",
@@ -75,6 +85,7 @@ const flights = [
     departureTime: new Date("2024-01-20T08:45:00"),
     arrivalTime: new Date("2024-01-20T10:10:00"),
     airline: "Iberia",
+    price: 300,
   },
   {
     departure: "Moscow",
@@ -82,6 +93,7 @@ const flights = [
     departureTime: new Date("2024-01-21T12:00:00"),
     arrivalTime: new Date("2024-01-21T13:50:00"),
     airline: "Aeroflot",
+    price: 250,
   },
   {
     departure: "Miami",
@@ -89,6 +101,7 @@ const flights = [
     departureTime: new Date("2024-01-22T14:30:00"),
     arrivalTime: new Date("2024-01-22T16:00:00"),
     airline: "American Airlines",
+    price: 180,
   },
   {
     departure: "São Paulo",
@@ -96,6 +109,7 @@ const flights = [
     departureTime: new Date("2024-01-23T19:00:00"),
     arrivalTime: new Date("2024-01-23T20:30:00"),
     airline: "LATAM",
+    price: 300,
   },
   {
     departure: "Mumbai",
@@ -103,6 +117,7 @@ const flights = [
     departureTime: new Date("2024-01-24T10:15:00"),
     arrivalTime: new Date("2024-01-24T12:40:00"),
     airline: "Air India",
+    price: 400,
   },
   {
     departure: "Los Angeles",
@@ -110,6 +125,7 @@ const flights = [
     departureTime: new Date("2024-01-25T15:05:00"),
     arrivalTime: new Date("2024-01-25T18:30:00"),
     airline: "Delta Air Lines",
+    price: 350,
   },
   {
     departure: "Mexico City",
@@ -117,6 +133,7 @@ const flights = [
     departureTime: new Date("2024-01-26T11:30:00"),
     arrivalTime: new Date("2024-01-26T14:00:00"),
     airline: "Aeromexico",
+    price: 220,
   },
   {
     departure: "Beijing",
@@ -124,6 +141,7 @@ const flights = [
     departureTime: new Date("2024-01-27T13:00:00"),
     arrivalTime: new Date("2024-01-27T16:20:00"),
     airline: "China Southern Airlines",
+    price: 450,
   },
   {
     departure: "Johannesburg",
@@ -131,6 +149,7 @@ const flights = [
     departureTime: new Date("2024-01-28T07:10:00"),
     arrivalTime: new Date("2024-01-28T09:40:00"),
     airline: "South African Airways",
+    price: 300,
   },
   {
     departure: "Amsterdam",
@@ -138,6 +157,7 @@ const flights = [
     departureTime: new Date("2024-01-29T16:25:00"),
     arrivalTime: new Date("2024-01-29T17:00:00"),
     airline: "KLM",
+    price: 280,
   },
   {
     departure: "Amsterdam",
@@ -145,17 +165,30 @@ const flights = [
     departureTime: new Date("2024-01-10T16:25:00"),
     arrivalTime: new Date("2024-01-12T17:00:00"),
     airline: "KLM",
+    price: 290,
   },
-  ,
   {
     departure: "Amsterdam",
     arrival: "London",
     departureTime: new Date("2024-01-10T16:25:00"),
     arrivalTime: new Date("2024-01-13T17:00:00"),
     airline: "KLM",
+    price: 270,
   },
 ];
+// Add the 'arrivalImage' property to each flight object with "cape-town"
+const flightsWithArrivalImage = flights.map((flight) => ({
+  departure: flight.departure,
+  arrival: flight.arrival,
+  departureTime: flight.departureTime,
+  arrivalTime: flight.arrivalTime,
+  airline: flight.airline,
+  price: flight.price,
+  arrivalImage: `/ArrivalCityImage/${flight.arrival
+    .replace(/\s+/g, "-")
+    .toLowerCase()}.jpg`,
+}));
 
 export default function handler(req, res) {
-  res.status(200).json(flights);
+  res.status(200).json(flightsWithArrivalImage);
 }

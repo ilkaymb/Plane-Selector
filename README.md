@@ -1,5 +1,4 @@
-#Plane Selector
-# Flight Selection Screen
+# Plane Selector
 
 This project is a flight selection screen developed using React, React Suite, Tailwind CSS, and Next.js.
 ![Plane-Selector](https://github.com/ilkaymb/Plane-Selector/assets/73322500/0de1c425-e1e7-4577-8910-651807255a3a)
